@@ -1,10 +1,9 @@
 const express = require("express");
 const app = express();
 const moviesApi = require("./routes/movies");
-const bodyParser = require("body-parser");
 
 const { config } = require("./config/index");
-app.use(bodyParser.json());
+app.use(express.json());
 moviesApi(app);
 
 app.listen(config.port, () => {
