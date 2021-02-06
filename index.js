@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const moviesApi = require("./routes/movies");
+const helmet = require("helmet");
 
 const {
   logErrors,
@@ -10,7 +11,10 @@ const {
 
 const notFoundHandler = require("./utils/middleware/notFoundHander");
 const { config } = require("./config/index");
+
 app.use(express.json());
+app.use(helmet());
+
 moviesApi(app);
 
 // catch err 404
