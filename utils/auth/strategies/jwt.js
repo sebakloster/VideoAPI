@@ -11,11 +11,7 @@ const UserSerivice = require("../../../services/users");
 // y para que verifique que es complemente valido.
 const { config } = require("../../../config/index");
 
-// definimos nuestra nueva Strategia
 passport.use(
-  /* recibe la firma con el que fue firmado el token 
-  y la especificación de donde sacamos el JWT
-  */
   new Strategy(
     {
       secretOrKey: config.authJwtSecret,
@@ -36,8 +32,7 @@ passport.use(
         }
 
         delete user.password;
-        // si lo encontramos devolvemos la información del usuario
-        // junto con los scopes o permisos que esté tiene.
+
         cb(null, { ...user, scopes: tokenPayload.scopes });
       } catch (err) {
         cb(err);
