@@ -7,6 +7,7 @@ const {
   updateMovieSchema,
 } = require("../utils/schemas/movies");
 const validationHandler = require("../utils/middleware/validationHandler");
+const scopesValidationHandler = require("../utils/middleware/scopesValidationHanlder");
 
 //JWT strategy
 require("../utils/auth/strategies/jwt");
@@ -20,6 +21,7 @@ function moviesApi(app) {
   router.get(
     "/",
     passport.authenticate("jwt", { session: false }),
+    scopesValidationHandler(["read:movies"]),
     async function (req, res, next) {
       const { tags } = req.query;
       try {
@@ -37,6 +39,7 @@ function moviesApi(app) {
   router.get(
     "/:movieId",
     passport.authenticate("jwt", { session: false }),
+    scopesValidationHandler(["read:movies"]),
     validationHandler({ movieId: movieIdSchema }, "params"),
     async function (req, res, next) {
       const { movieId } = req.params;
@@ -55,6 +58,7 @@ function moviesApi(app) {
   router.post(
     "/",
     passport.authenticate("jwt", { session: false }),
+    scopesValidationHandler(["create:movies"]),
     validationHandler(createMovieSchema),
     async function (req, res, next) {
       const { body: movie } = req;
@@ -73,6 +77,7 @@ function moviesApi(app) {
   router.put(
     "/:movieId",
     passport.authenticate("jwt", { session: false }),
+    scopesValidationHandler(["update:movies"]),
     validationHandler({ movieId: movieIdSchema }, "params"),
     validationHandler(updateMovieSchema),
     async function (req, res, next) {
@@ -96,6 +101,7 @@ function moviesApi(app) {
   router.delete(
     "/:movieId",
     passport.authenticate("jwt", { session: false }),
+    scopesValidationHandler(["delete:movies"]),
     validationHandler({ movieId: movieIdSchema }, "params"),
     async function (req, res, next) {
       const { movieId } = req.params;
