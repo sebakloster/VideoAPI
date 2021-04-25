@@ -1,5 +1,4 @@
 const boom = require("@hapi/boom");
-const { names } = require("debug");
 
 function scopesValidationHandler(allowedScopes) {
   return function (req, res, next) {

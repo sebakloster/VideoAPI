@@ -7,13 +7,13 @@ const { userIdSchema } = require("../utils/schemas/users");
 const { createUserMovieSchema } = require("../utils/schemas/userMovies");
 const scopesValidationHandler = require("../utils/middleware/scopesValidationHanlder");
 
+require("../utils/auth/strategies/jwt");
+
 function userMoviesApi(app) {
   const router = express.Router();
   app.use("/api/user-movies", router);
 
   const userMoviesService = new UserMoviesService();
-  //JWT strategy
-  require("../utils/auth/strategies/jwt");
 
   router.get(
     "/",
@@ -53,28 +53,24 @@ function userMoviesApi(app) {
       }
     }
   );
+
   router.delete(
     "/:userMovieId",
     passport.authenticate("jwt", { session: false }),
     scopesValidationHandler(["delete:user-movies"]),
-    validationHandler(
-      { userMovieId: movieIdSchema },
-      "params",
-      async function (req, res, next) {
-        const { userMovieId } = req.params;
-        try {
-          const deletedUserMovieId = await UserMoviesService.deletedUserMovieId(
-            userMovieId
-          );
-          res.status(200).json({
-            data: deletedUserMovieId,
-            message: "UserMovie Deleted",
-          });
-        } catch (error) {
-          next(error);
-        }
+    validationHandler({ userMovieId: movieIdSchema }, "params"),
+    async function (req, res, next) {
+      const { userMovieId } = req.params;
+      try {
+        const deletedUserMovieId = await userMoviesService.deleteUserMovie({userMovieId}); //prettier-ignore
+        res.status(200).json({
+          data: deletedUserMovieId,
+          message: "UserMovie Deleted",
+        });
+      } catch (error) {
+        next(error);
       }
-    )
+    }
   );
 }
 module.exports = userMoviesApi;
